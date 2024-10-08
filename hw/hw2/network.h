@@ -54,7 +54,7 @@ public:
 
     // pre: must take in id from two people
     // post: returns vector of shortest path of vertices from two input people
-    vector<int> shortestPath(int from, int to);
+    std::vector<int> shortestPath(int from, int to);
 
 };
 

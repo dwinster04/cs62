@@ -23,9 +23,11 @@ int Network::numUsers()
 
 User* Network::getUser(int id)
 {
-    if (id >= 0 && id < users_.size())      // check if id is within the range of accessible id's
-        return users_[id];
-    return nullptr;
+    for (auto e: users_)
+    {
+        if (e->getId() == id)
+            return e;
+    }
 }
 
 void Network::addUser(User* user)
@@ -146,6 +148,7 @@ void Network::readUsers(char* name)
                     continue;
                 } // use ss to parse the file (stoi does not work: tried and failed)
                 int year;
+                std::stringstream ssYear(lines.substr(1));
                 ssYear >> year;
 
                 // read zip
@@ -196,17 +199,8 @@ void Network::writeUsers(char* fname)
     outputFile.close();
 }
 
-User* Network::getUser(int id)
-{
-    for (auto e: users_)
-    {
-        if (e->getId() == id)
-            return e;
-    }
-}
 
-
-std::vector<int> Network::shortestPath(int from, int to) // test test test
+std::vector<int> Network::shortestPath(int from, int to)
 {
     if (from == to)
     {
