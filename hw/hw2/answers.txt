@@ -1,0 +1,6 @@
+1. This makes it easier to add/remove users as there is no need to copy everything stored in the user objects.
+2. Returning by reference in general helps in programming by preventing the creation of copies. This basically means that we are dealing with the original values.
+3. A set allows for uniqueness of elements.'
+4. The User object inside the function may disappear as soon as the function ends which is not what we want.
+5. O(n^2), O(1), O(1), and O(1) respectively
+6. I have spent a total of 19 hours on this assignment throughout the week and am feeling insanely burnt out and tired from the week.

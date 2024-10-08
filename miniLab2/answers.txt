@@ -1,0 +1,45 @@
+1.4 Followup Questions
+1. Terminal states that make: 'output' is up to date because it has already been compiled once.
+2. Since changes were made then we had to recompile the files since they are no longer up to date.
+3. After adding "Hello World" and altering the make file, running make told us that 'output' is up to date.
+4. After reverting to the original makefile, it recompiles main.cpp, class1.cpp, class2.cpp, and updates the output.
+5. Without dependencies, the computer does not check for changes.
+
+2.2 Followup questions
+1. g++ -c main.cpp -o main.o
+g++ -c class1.cpp -o class1.o
+g++ -c class2.cpp -o class2.o
+g++ main.o class1.o class2.o -o output
+
+2. The first three commands were flagged with -c flag while the last one was the only that wasn't.
+3. class1.o, class2.o, main.o were all added after checking files within the directory with the ls command.
+4. class1.o and class2.o were recompiled
+5. class1.o, class2.o, and main.o within the directory were removed.
+6. When running make clean, errors appeared in the terminal stating that the output no longer exists in the directory. ([Makefile:14:clean] Error 1)
+   When running make output, all the files compiled with no error.
+7. When switching around the flags, running make still works.
+
+3.2 Followup questions
+1. g++ was run once
+2. Yes, the compilation still works
+3. The compilation no longer works and yields an error.
+4. $^ represents all the dependencies listed/$< represents only the first dependency (in "output"'s case, only main.o is being referred to)/$@ represents the target's name
+
+4.1 Followup questions
+1. After running make clean, the terminal output was "rm *.o output".
+2. I would guess that since %.cpp refers to the cpp files not being mentioned.
+
+5.1 Followup questions
+1. Terminal output: 
+g++ -Wall -c main.cpp -o main.o
+g++ -Wall -c class1.cpp -o class1.o
+g++ -Wall -c class2.cpp -o class2.o
+g++ -Wall main.o class1.o class2.o -o output
+
+2. Terminal output:
+g++ -Wall -std=c++11 -c main.cpp -o main.o
+g++ -Wall -std=c++11 -c class1.cpp -o class1.o
+g++ -Wall -std=c++11 -c class2.cpp -o class2.o
+g++ -Wall -std=c++11 main.o class1.o class2.o -o output
+
+3. These two are useful as $(COMP) represents the compiler variable and $(FLAGS) enables compiler flags.
