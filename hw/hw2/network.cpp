@@ -206,7 +206,7 @@ User* Network::getUser(int id)
 }
 
 
-vector<int> Network::shortestPath(int from, int to) // test test test
+std::vector<int> Network::shortestPath(int from, int to) // test test test
 {
     if (from == to)
     {
@@ -216,7 +216,7 @@ vector<int> Network::shortestPath(int from, int to) // test test test
     std::unordered_map<User*, User*> prev;
     std::queue<User*> queue;
 
-    source = getUser(from);
+    User* source = getUser(from);
     queue.push(source);
     
 
