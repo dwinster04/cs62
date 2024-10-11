@@ -5,47 +5,45 @@
 // constructor
 User::User()
 {
-    id = -1;  
-    name = " "; 
-    zip = -1; 
-    year = -1; 
+    id = -1;
+    name = " ";
+    zip = -1;
+    year = -1;
 }
 
-User::User(int id, std::string name, int year, int zip, std::set<int> friends)
+User::User(int input_id, std::string input_name, int input_year, int input_zip, std::set<int> input_friends)
 {
-    id_ = id;
-    name_ = name; 
-    year_ = year;
-    zip_ = zip; 
-    friends_ = friends; 
+    id = input_id;
+    name = input_name; 
+    year = input_year;
+    zip = input_zip; 
+    friends = input_friends; 
 }
 
 // getters
 int User::getId()
 {
-    std::cout << "works" << std::endl;
-    return id_; 
-
+    return id; 
 }
 
 std::string User::getName()
 {
-    return name_; 
+    return name; 
 }
 
 int User::getYear()
 {
-    return year_;
+    return year;
 }
 
 int User::getZip()
 {
-    return zip_;
+    return zip;
 }
 
 std::set<int> & User::getFriends()
 {
-    return friends_;
+    return friends;
 }
 
 // friend functs

@@ -56,6 +56,18 @@ public:
     // post: returns vector of shortest path of vertices from two input people
     std::vector<int> shortestPath(int from, int to);
 
+    // pre: must take in from, to, and distance parameters
+    // post: returns vector of IDs along the path and sets the pointer to the id of user
+    std::vector<int> distanceUser(int from, int& to, int distance);
+
+    // pre: takes in user and reference to int (score) 
+    // post: returns list of users who share the highest "score" for suggested friends/highest number of common friends
+    vector<int> suggestFriends(int who, int& score);
+
+    // pre: none
+    // post: returns a vector of vectors which are groups of connected users
+    vector<vector<int> > groups()
+
 };
 
 #endif //NETWORK_H

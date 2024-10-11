@@ -34,7 +34,7 @@ public:
 
     //pre: none
     //post: creates a new user with user information 
-    User(int id, std::string name, int year, int zip, std::set<int> friends);
+    User(int input_id, std::string input_name, int input_year, int input_zip, std::set<int> input_friends);
 
 
     // getters 
