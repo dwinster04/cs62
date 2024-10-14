@@ -10,12 +10,15 @@
 #include <algorithm>
 #include <stack>
 
-Network::Network() {
+Network::Network() 
+{
     users_ = {};
 } 
 
-User* Network::getUser(int id) {
-    for (auto e : users_) {
+User* Network::getUser(int id) 
+{
+    for (auto e : users_) 
+    {
         if (e -> getId() == id) 
         {
             return e;

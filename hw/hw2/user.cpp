@@ -50,8 +50,8 @@ std::set<int> & User::getFriends()
 void User::addFriend(int id)
 {
     for(auto i: friends_)            // range based loop since elements in set are read-only
-        if(i == id)                 // existing friend check
-            return;                 // stops program if check is true
+        if(i == id)                  // existing friend check
+            return;                  // stops program if check is true
     friends_.insert(id);             // inserts if check falls through
 }
 

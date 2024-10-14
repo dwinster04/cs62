@@ -8,166 +8,206 @@
 #include <fstream>
 #include <string>
 
-// constructor
-Network::Network() {}                         // default network object auto set with size zero
-
-// operations
-
-
-int Network::numUsers()
+Network::Network() 
 {
-    return users_.size();
-}
+    users_ = {};
+} 
 
-User* Network::getUser(int id)
+User* Network::getUser(int id) 
 {
-    if (id >= 0 && id < users_.size())      // check if id is within the range of accessible id's
-        return users_[id];
+    for (auto e : users_) 
+    {
+        if (e -> getId() == id) 
+        {
+            return e;
+        }
+    }
     return nullptr;
 }
 
-void Network::addUser(User* user)
+void Network::addUser(User* newUser) 
 {
-    if (user != nullptr)
-        users_.push_back(user);               // push back user into vector
-    else
-        return;                               // returns if user = null ptr
+    for (auto e : users_) 
+    {
+        if (e -> getId() == newUser -> getId()) 
+        {
+            return;
+        }
+    }
+    users_.push_back(newUser);
 }
 
-
-
-int Network::addConnection(std::string s1, std::string s2)
+int Network::addConnection(std::string s1, std::string s2) 
 {
-   
-    User* user1 = nullptr;                    // initialize users to nullptr
-    User* user2 = nullptr;
+    int id1 = getId(s1);
+    int id2 = getId(s2);
+    User* user1 = getUser(id1);
+    User* user2 = getUser(id2);
 
-    for (int i = 0; i <= users_.size(); ++i)
+    if ((id1 == -1) || (id2 == -1)) 
     {
-        if (users_[i]->getName() == s1)       // access the data stored vector of User*'s
-            {
-                user1 = users_[i];            // first user found
-            }
-            if (users_[i]->getName() == s2)
-            {
-                user2 = users_[i];            // found second user
-            }
+        return -1;
+    }
+    else {
+        user1 -> addFriend(id2);
+        user2 -> addFriend(id1);
+
+    }
+    return 0;
+}
+
+int Network::deleteConnection(std::string s1, std::string s2) 
+{
+    int id1 = getId(s1);
+    int id2 = getId(s2);
+
+    if ((id1 == -1) || (id2 == -1)) {
+        return -1;
+    }
+    
+    User* user1 = getUser(id1);
+    User* user2 = getUser(id2);
+
+    if ((user1 == nullptr) || (user2 == nullptr)) 
+    {
+        return -1;
     }
 
-    if (user1 != nullptr && user2 != nullptr)
+    if (user1 -> getFriends().find(id2) != user1 -> getFriends().end()) 
     {
-        user1->addFriend(user2->getId());     // code from notes
-        user2->addFriend(user1->getId());
-
-        
+        user1 -> deleteFriend(id2);
+        user2 -> deleteFriend(id1);
         return 0;
     }
-
-    return -1;                                // users not found
+    else 
+    {
+        return -1;
+    }
 }
 
-int Network::deleteConnection(std::string s1, std::string s2)
+int Network::getId(std::string name) 
 {
-   
-    User* user1 = nullptr;                    // initialize users to nullptr
-    User* user2 = nullptr;
-
-    for (int i = 0; i <= users_.size(); ++i)
+    for (auto e : users_) 
     {
-        if (users_[i]->getName() == s1)
-            {
-                user1 = users_[i]; 
-            }
-            if (users_[i]->getName() == s2)
-            {
-                user2 = users_[i]; 
-            }
-    }
-
-    if (user1 != nullptr && user2 != nullptr)
-    {
-        user1->deleteFriend(user2->getId()); // code from notes
-        user2->deleteFriend(user1->getId()); // undirected connection
-
-
-        return 0;
-    }
-
-    return -1;                               // user(s) not found
-}
-
-int Network::getId(std::string name)
-{
-    for (int i = 0; i <= users_.size(); ++i)  
-    {
-        if (users_[i]->getName() == name)   // check if users_[i] == input name
-            return users_[i]->getId();      // returns id of users[i]
+        if (e->getName() == name) 
+        {
+            return e->getId();
+        }
     }
     return -1;
 }
 
-void Network::readUsers(char* name)
+int Network::numUsers() 
 {
-    
-    std::ifstream inputFile(name);
-    if (inputFile.is_open())
-    {
-        std::string lines;
-        while (std::getline(inputFile, lines))
-        {
-            int id = std::stoi(lines);                     // read id as string
-
-            std::getline(inputFile, lines);
-            std::string name = lines.substr(1); // skips leading tab
-
-            std::getline(inputFile, lines);
-            int year = std::stoi(lines.substr(1)); // read year
-
-            std::getline(inputFile, lines);
-            int zip = std::stoi(lines.substr(1));  // read zip
-            
-            std::set<int> friends;   // initialize vector of strings to represent friends
-            std::getline(inputFile, lines); 
-            std::stringstream ss(lines);
-            int friendId;
-        
-            while (ss >> friendId)
-            {
-                friends.insert(friendId);        // push_back vector with read friends from file
-            }
-        
-            User* tempUser = new User(id, name, year, zip, friends);
-
-            
-            addUser(tempUser);                  // call add user function to add tempUser which holds string of read users
-        }
-
-
-        inputFile.close();
-
-    }
+    return users_.size();
 }
 
-void Network::writeUsers(char* fname)
-{
-    std::ofstream outputFile(fname);
-    if (outputFile.is_open())
-    {
-        for (auto& user : users_)         // direct reference to user object
-        {
-            if (user != nullptr)
-                outputFile << user->getId() << std::endl;
-                outputFile << "\t" << user->getName() << std::endl;
-                outputFile << user->getYear() << std::endl;
-                outputFile << user->getZip() << std::endl;
+void Network::readUsers(char * fname)
+{   
+    
+    std::ifstream file(fname);
 
-                std::set<int> friends = user->getFriends(); // get friends of user and put it in their friends list
-                for (auto& id : friends) // traverse through friend list
-                {
-                    outputFile << id << " ";
-                }
-                outputFile << std::endl;
-        }
+    if(!file)
+    {
+        return;
     }
-    outputFile.close();
+
+    std::string line; // line takes in each line in file fname
+    getline(file, line); // set line to the first line in fname
+    std::stringstream ss; 
+    ss << line; 
+    int numUsers; 
+    ss >> numUsers; 
+
+    
+    
+    for(int i = 0; i < numUsers; i++)
+    {
+        // parse id
+        std::string stringId; 
+        getline(file,stringId);
+        std::stringstream sId(stringId);
+        int intId; 
+        sId >> intId;
+
+        // parse name
+        std::string string; 
+        std::string temp;
+        getline(file, string); 
+        std::stringstream sName(string);
+        std::string name;
+        while(sName >> temp)
+        {
+            name = name + temp + " "; 
+        }
+
+        if(name[name.size()-1] == ' ') // removing tab character
+        {
+            name = name.substr(0,name.size()-1); // removes space after name
+        }
+        
+
+        // parse year
+        std::string year; 
+        getline(file,year); 
+        std::stringstream sYear(year);
+        int intYear;
+        sYear >> intYear; 
+
+        // parse zip
+        std::string zip; 
+        getline(file,zip); 
+        std::stringstream sZip(zip); 
+        int intZip; 
+        sZip >> intZip; 
+
+        std::string fList;
+        std::set<int> connections;
+        getline(file, fList); // gets line of friends
+        std::stringstream fss; // friend stringstream
+        fss << fList; 
+        int friendId; 
+        while(fss >> friendId)
+        {
+            connections.insert(friendId);
+
+        } 
+        User* newUser = new User(intId, name, intYear, intZip, connections);
+        addUser(newUser);
+    }
+   
+
+    file.close();
+
+
+}
+
+void Network::writeUsers(char* fname) 
+{
+    std::ofstream fout(fname);
+
+    if (!fout.is_open()) 
+    {
+        std::cout << "error opening file..." << std::endl;
+        return;
+    }
+
+    fout << users_.size() << std::endl;
+
+    for (int i = 0; i < users_.size(); ++i) 
+    {
+        User* e = users_[i];
+        fout << e -> getId() << std::endl;
+        fout << '\t' << e -> getName() << std::endl;
+        fout << '\t' << e -> getYear() << std::endl;
+        fout << '\t' << e -> getZip() << std::endl;
+        fout << "\t"; 
+        auto friends = e->getFriends();
+        for (int friendId : friends) 
+        {
+            fout << friendId << " "; 
+        }
+        fout << std::endl;
+    }   
+    fout.close();
 }

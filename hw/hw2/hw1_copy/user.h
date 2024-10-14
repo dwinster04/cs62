@@ -11,11 +11,11 @@ class User
 { 
 private:
 
-    int id; 
-    std::string name; 
-    int year;
-    int zip;
-    std::set<int> friends;
+    int id_; 
+    std::string name_; 
+    int year_;
+    int zip_;
+    std::set<int> friends_;
 
     // class invariants
     // 1) int id_: id stores user id 0,1,2,...
@@ -41,11 +41,11 @@ public:
 
     // pre: none
     // post: returns user id
-    int getId(); 
+    int getId();
 
     // pre: none
     // post: returns user name
-    std::string getName(); 
+    std::string getName();
 
     // pre: none
     // post: returns birth year of user
