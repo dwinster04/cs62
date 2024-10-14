@@ -52,6 +52,10 @@ public:
     // post: writes all network data onto a file
     void writeUsers(char* fname);
 
+    // pre: none
+    // post: remove tab from line
+    std::string removeTabs(const std::string& fileLine);
+
     // pre: must take in id from two people
     // post: returns vector of shortest path of vertices from two input people
     std::vector<int> shortestPath(int from, int to);
@@ -62,11 +66,13 @@ public:
 
     // pre: takes in user and reference to int (score) 
     // post: returns list of users who share the highest "score" for suggested friends/highest number of common friends
-    vector<int> suggestFriends(int who, int& score);
+    std::vector<int> suggestFriends(int who, int& score);
 
     // pre: none
     // post: returns a vector of vectors which are groups of connected users
-    vector<vector<int> > groups()
+    std::vector<std::vector<int> > groups();
+
+    std::vector<int> dfshelper(User* source);
 
 };
 

@@ -3,6 +3,7 @@
 #include <iostream>
 #include <string>
 #include <assert>
+#include <fstream>
 
 void user_choice()
 {
@@ -28,8 +29,7 @@ int main(int argc, char *argv[])
         if (choice == 1) // option 1: add a user
         {
             std::string firstN, lastN;
-            int year;
-            int zip;
+            int year, zip;
 
             std::cout << "Please enter the first name, last name, year of birth, and zip code number in that order: " <<std::endl;
             std::cin >> firstN >> lastN >> year >> zip;
@@ -38,7 +38,8 @@ int main(int argc, char *argv[])
 
             int id = network.numUsers();        // sets new id = to number of users in the network at nth iteration
             std::string fullName = firstN + " " + lastN; // makes first name and last name new variable full name
-            User* newUser = new User(id, fullName, year, zip, std::set<int>network.addUser(newUser));     // creates the new user with new id and given inputs
+            network.addUser(new User(network.numUsers(), fullName, year, zip, {}));     // creates the new user with new id and given inputs
+            std::cout << fullName << "has been added to the network." << std::endl;
         }
         else if (choice == 2) // option 2: add a friend connection
         {
@@ -94,26 +95,6 @@ int main(int argc, char *argv[])
             break;
         }
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 return 0;
 };

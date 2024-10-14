@@ -5,66 +5,66 @@
 // constructor
 User::User()
 {
-    id = -1;
-    name = " ";
-    zip = -1;
-    year = -1;
+    id_ = -1;
+    name_ = "";
+    zip_ = -1;
+    year_ = -1;
 }
 
-User::User(int input_id, std::string input_name, int input_year, int input_zip, std::set<int> input_friends)
+User::User(int id, std::string name, int year, int zip, std::set<int> friends)
 {
-    id = input_id;
-    name = input_name; 
-    year = input_year;
-    zip = input_zip; 
-    friends = input_friends; 
+    id_ = id;
+    name_ = name; 
+    year_ = year;
+    zip_ = zip; 
+    friends_ = friends; 
 }
 
 // getters
 int User::getId()
 {
-    return id; 
+    return id_; 
 }
 
 std::string User::getName()
 {
-    return name; 
+    return name_; 
 }
 
 int User::getYear()
 {
-    return year;
+    return year_;
 }
 
 int User::getZip()
 {
-    return zip;
+    return zip_;
 }
 
 std::set<int> & User::getFriends()
 {
-    return friends;
+    return friends_;
 }
 
 // friend functs
 void User::addFriend(int id)
 {
-    for(auto i: friends)            // range based loop since elements in set are read-only
+    for(auto i: friends_)            // range based loop since elements in set are read-only
         if(i == id)                 // existing friend check
             return;                 // stops program if check is true
-    friends.insert(id);             // inserts if check falls through
+    friends_.insert(id);             // inserts if check falls through
 }
 
 void User::deleteFriend(int id)
 {
     bool check = false;             // initialize default bool to false
     
-    for(auto i: friends)
+    for(auto i: friends_)
         if(i == id)
             check = true;           // set bool value to true if check falls through
 
     if(check == true)               
-        friends.erase(id);          // remove specified id from friend's list
+        friends_.erase(id);          // remove specified id from friend's list
     
     return;
 }

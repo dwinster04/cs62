@@ -145,20 +145,20 @@ void Network::readUsers(char* name)
             std::set<int> friends;
 
             std::getline(inputFile, line);
-            if (line.empty()) 
+            if (fileLine.empty()) 
                 continue;
             std::stringstream ssid(line);
             ssid >> id;
 
             std::getline(inputFile, line);
-            if (line.empty())
+            if (fileLine.empty())
                 continue;
             std::stringstream ssname;
             ssname >> first >> last;
             name = first + " " + last;
 
             std::getline(inputFile, line);
-            if (line.empty())
+            if (fileLine.empty())
                 continue;
             std::stringstream sszip(removeTabs(line));
         }
@@ -199,58 +199,54 @@ void Network::writeUsers(char* fname)
 
 std::vector<int> Network::shortestPath(int from, int to)
 {
-    if (from < 0 || from >= users_.size() || to < 0 || to >= users_.size()) // checking valid input indices
-        return {}; 
-
-    int sizeUsers = users_.size();
-    std::vector<bool> visited (sizeUsers, false);
-    std::vector<int> dist (sizeUsers, -1);
-    std::vector<int> prev (sizeUsers, -1);
-    std::queue<int> queue;
-
-    dist[from] = 0;
-    visited[from] = true;
-    queue.push(from);
-
-    // run BFS to find shortest result
-    while (!queue.empty())
+    if (from == to)  // same people were input (shortest path is -1)
     {
-        int current = queue.front();
+        std::cout << "Same person" << std::endl;
+        break;
+    }
+
+    std::unordered_map<User*, User*> prev;
+    std::queue<User*> queue;
+
+    User* source = getUser(from);
+    queue.push(source);
+    
+
+    while (queue.size() > 0)
+    {
+        User* curr = queue.front();
         queue.pop();
 
-        // target node found
-        if (current == to)
-            break;
-
-        // look at friends
-        for (int neighbor : users_[current]->getFriends())
+        if (curr->getId() == to)
         {
-            if (!visited[neighbor])
+            std::vector<int> path;
+            while (curr != source)
             {
-                visited[neighbor] = true;
-                dist[neighbor] = dist[current] + 1;
-                prev[neighbor] = current;
-                queue.push(neighbor);
+                path.push_back(curr->getId());
+                curr = prev[curr];
+            }
+            std::reverse(path.begin(), path.end());
+            return path;
+        }
+
+        for (auto neighbor : curr->getFriends())
+        {
+            if (prev.find(getUser(neighbor)) == prev.end() && getUser(neighbor) != source)
+            {
+                queue.push(getUser(neighbor));
+                prev[getUser(neighbor)] = curr;
             }
         }
     }
-
-    if (dist[to] == -1) // return empty vector for no path
-        return {};
-
-    std::vector<int> result;
-    for (int current = to; current != -1; current = prev[current])
-        result.push_back(current);
-
-    std::reverse(result.begin(), result.end()); // reverse the result to get from to to
-
-    return result;
+    std::cout << "Not connected..." << std::endl;
+    std::vector<int> empty;
+    return empty;
 }
 
-std::vector<int> Network::distanceUser(int from, int& to, int dist)
+std::vector<int> Network::distanceUser(int from, int& to, int distance)
 {
 
-    std::unordered_map<User*, int> dist;  // keep track of map of dists in nodes
+    std::unordered_map<User*, int> dist;  // keep track of map of distances in nodes
     std::unordered_map<User*, User*> prev; // map to keep track of prev visied
     std::queue<User*> queue;
 
@@ -263,17 +259,17 @@ std::vector<int> Network::distanceUser(int from, int& to, int dist)
         User* curr = queue.front();
         queue.pop();
 
-        if (dist[curr] == dist)
+        if (dist[curr] == distance)
         {
-            std::vector<int> result;
+            std::vector<int> path;
             to = curr->getId();
             while (curr != source)
             {
-                result.push_back(curr->getId());
+                path.push_back(curr->getId());
                 curr = prev[curr];
             }
-            std::reverse(result.begin(), result.end()); // reverse result to get "from to to"
-            return result;
+            std::reverse(path.begin(), path.end()); // reverse path to get "from to to"
+            return path;
         }
 
         for (auto neighbor : curr->getFriends())
@@ -291,9 +287,9 @@ std::vector<int> Network::distanceUser(int from, int& to, int dist)
     return empty;
 }
 
-std::vector<int> Network::suggestFriends(int who, int& score)
+vector<int> Network::suggestFriends(int who, int& score)
 {
-    std::unordered_map<User*, int> dist;  // keep track of map of dists in nodes
+    std::unordered_map<User*, int> dist;  // keep track of map of distances in nodes
     std::unordered_map<int, int> scores;  // initialize map of scores
     int max_score;                        // max score to search all users with that score
     std::queue<User*> queue;
@@ -321,7 +317,7 @@ std::vector<int> Network::suggestFriends(int who, int& score)
             else
             {
                 dist[getUser(neighbor)] = dist[curr] + 1;
-                if (dist[getUser(neighbor)] == 2) // dist of neighbor = 2 since dist = 1 are direct friends
+                if (dist[getUser(neighbor)] == 2) // distance of neighbor = 2 since dist = 1 are direct friends
                 {
                     scores[neighbor] = 1;
                     if (max_score == 0) 
@@ -353,7 +349,7 @@ std::vector<int> Network::suggestFriends(int who, int& score)
     return suggestions;
 }
 
-std::vector<std::vector<int>> Network::groups()
+vector<vector<int>> Network::groups()
 {
     std::unordered_set<int> visited;
     std::vector<std::vector<int>> groups;
@@ -373,7 +369,7 @@ std::vector<std::vector<int>> Network::groups()
     return groups;
 }
 
-std::vector<int> Network::dfshelper(User* source)
+vector<int> Network::dfshelper(User* source)
 {
     std::stack<int> stck;
     std::vector<int> visited;

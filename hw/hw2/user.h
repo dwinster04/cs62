@@ -11,11 +11,11 @@ class User
 { 
 private:
 
-    int id; 
-    std::string name; 
-    int year;
-    int zip;
-    std::set<int> friends;
+    int id_; 
+    std::string name_; 
+    int year_;
+    int zip_;
+    std::set<int> friends_;
 
     // class invariants
     // 1) int id_: id stores user id 0,1,2,...
@@ -34,7 +34,7 @@ public:
 
     //pre: none
     //post: creates a new user with user information 
-    User(int input_id, std::string input_name, int input_year, int input_zip, std::set<int> input_friends);
+    User(int id, std::string name, int year, int zip, std::set<int> friends);
 
 
     // getters 

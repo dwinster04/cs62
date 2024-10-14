@@ -1,0 +1,7 @@
+1. I used "mkdir 'hw1_copy'" to create a directory of all copied files of hw1.
+2. Yes. DFS can be used to solve shortest path and distance user. It is effectively the same algorithm besides the way it travels down the tree/graph. It would also be less effecient as it goes to the deepest aspect first then returns to find the next deepest.
+3. Yes. BFS can be used to solve as it will go through the users at a certain depth and keep track of visited.
+4. You do not need to use DFS or BFS here as you can iterate through the friend ids of a friend of the root user to find any mutuals.
+5. O(n+m)
+6. O(n+m)
+7. With the help of Drahmann Center tutoring this has taken me upwards of 10 hours.
