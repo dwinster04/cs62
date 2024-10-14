@@ -7,225 +7,244 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <unordered_map>
 #include <algorithm>
 #include <stack>
-#include <unordered_set>
 
-// constructor
-Network::Network() {}                         // default network object auto set with size zero
+Network::Network() {
+    users_ = {};
+} 
 
-// operations
-
-
-int Network::numUsers()
-{
-    return users_.size();
-}
-
-User* Network::getUser(int id)
-{
-    for (auto e: users_)
-    {
-        if (e->getId() == id)
+User* Network::getUser(int id) {
+    for (auto e : users_) {
+        if (e -> getId() == id) 
+        {
             return e;
+        }
     }
     return nullptr;
 }
 
-void Network::addUser(User* user)
+void Network::addUser(User* newUser) 
 {
-    for (auto e: users_)   
+    for (auto e : users_) 
     {
-        if (e -> getId() == user -> getId())
+        if (e -> getId() == newUser -> getId()) 
         {
             return;
         }
-        users_.push_back(user);
-    }      
+    }
+    users_.push_back(newUser);
 }
 
-
-
-int Network::addConnection(std::string s1, std::string s2)
+int Network::addConnection(std::string s1, std::string s2) 
 {
-   
     int id1 = getId(s1);
     int id2 = getId(s2);
-    User* user1 = getUser(id1);                    // initialize users to nullptr
+    User* user1 = getUser(id1);
     User* user2 = getUser(id2);
 
-    if ((id1 == -1) || (id2 == -1))
+    if ((id1 == -1) || (id2 == -1)) 
     {
         return -1;
     }
-    else
-    {
-        user1 -> addFriend(id2);                   // undirected
+    else {
+        user1 -> addFriend(id2);
         user2 -> addFriend(id1);
+
     }
     return 0;
 }
 
-int Network::deleteConnection(std::string s1, std::string s2)
+int Network::deleteConnection(std::string s1, std::string s2) 
 {
-   
-    User* user1 = nullptr;                    // initialize users to nullptr
-    User* user2 = nullptr;
+    int id1 = getId(s1);
+    int id2 = getId(s2);
 
-    for (int i = 0; i <= users_.size(); ++i)
+    if ((id1 == -1) || (id2 == -1)) {
+        return -1;
+    }
+    
+    User* user1 = getUser(id1);
+    User* user2 = getUser(id2);
+
+    if ((user1 == nullptr) || (user2 == nullptr)) 
     {
-        if (users_[i]->getName() == s1)
-            {
-                user1 = users_[i]; 
-            }
-            if (users_[i]->getName() == s2)
-            {
-                user2 = users_[i]; 
-            }
+        return -1;
     }
 
-    if (user1 != nullptr && user2 != nullptr)
+    if (user1 -> getFriends().find(id2) != user1 -> getFriends().end()) 
     {
-        user1->deleteFriend(user2->getId()); // code from notes
-        user2->deleteFriend(user1->getId()); // undirected connection
-
-
+        user1 -> deleteFriend(id2);
+        user2 -> deleteFriend(id1);
         return 0;
     }
-
-    return -1;                               // user(s) not found
-}
-
-int Network::getId(std::string name)
-{
-    for (auto e: users_)
+    else 
     {
-        if (e -> getName() == name)
-        {
-            return e -> getId();
-        }
+        return -1;
     }
 }
 
-std::string Network::removeTabs(const std::string& fileLine)
+int Network::getId(std::string name) 
 {
-    std::string result;
-    for (size_t i = 0; i < fileLine.size(); ++i)
+    for (auto e : users_) 
     {
-        if (fileLine[i] != '\t')
+        if (e->getName() == name) 
         {
-            result += fileLine[i];
+            return e->getId();
         }
     }
+    return -1;
 }
 
-void Network::readUsers(char* name)
+int Network::numUsers() 
 {
-    std::ifstream inputFile(name);
-    if (!inputFile.is_open())
+    return users_.size();
+}
+
+void Network::readUsers(char * fname)
+{   
+    
+    std::ifstream file(fname);
+
+    if(!file)
+    {
+        return;
+    }
+
+    std::string line; // line takes in each line in file fname
+    getline(file, line); // set line to the first line in fname
+    std::stringstream ss; 
+    ss << line; 
+    int numUsers; 
+    ss >> numUsers; 
+
+    
+    
+    for(int i = 0; i < numUsers; i++)
+    {
+        // parse id
+        std::string stringId; 
+        getline(file,stringId);
+        std::stringstream sId(stringId);
+        int intId; 
+        sId >> intId;
+
+        // parse name
+        std::string string; 
+        std::string temp;
+        getline(file, string); 
+        std::stringstream sName(string);
+        std::string name;
+        while(sName >> temp)
+        {
+            name = name + temp + " "; 
+        }
+
+        if(name[name.size()-1] == ' ') // removing tab character
+        {
+            name = name.substr(0,name.size()-1); // removes space after name
+        }
+        
+
+        // parse year
+        std::string year; 
+        getline(file,year); 
+        std::stringstream sYear(year);
+        int intYear;
+        sYear >> intYear; 
+
+        // parse zip
+        std::string zip; 
+        getline(file,zip); 
+        std::stringstream sZip(zip); 
+        int intZip; 
+        sZip >> intZip; 
+
+        std::string fList;
+        std::set<int> connections;
+        getline(file, fList); // gets line of friends
+        std::stringstream fss; // friend stringstream
+        fss << fList; 
+        int friendId; 
+        while(fss >> friendId)
+        {
+            connections.insert(friendId);
+
+        } 
+        User* newUser = new User(intId, name, intYear, intZip, connections);
+        addUser(newUser);
+    }
+   
+
+    file.close();
+
+
+}
+
+void Network::writeUsers(char* fname) 
+{
+    std::ofstream fout(fname);
+
+    if (!fout.is_open()) 
     {
         std::cout << "error opening file..." << std::endl;
         return;
     }
-    else
+
+    fout << users_.size() << std::endl;
+
+    for (int i = 0; i < users_.size(); ++i) 
     {
-        int numUsers = 0;
-        std::string line;
-
-        std::getline(inputFile, line);
-        std::stringstream ss(line);
-        ss >> numUsers;
-
-        for (int i = 0; i < numUsers; ++i)
+        User* e = users_[i];
+        fout << e -> getId() << std::endl;
+        fout << '\t' << e -> getName() << std::endl;
+        fout << '\t' << e -> getYear() << std::endl;
+        fout << '\t' << e -> getZip() << std::endl;
+        fout << "\t"; 
+        auto friends = e->getFriends();
+        for (int friendId : friends) 
         {
-            int id;
-            std::string name, first, last, line;
-            int year, zip, friendId;
-            std::set<int> friends;
-
-            std::getline(inputFile, line);
-            if (line.empty()) 
-                continue;
-            std::stringstream ssid(line);
-            ssid >> id;
-
-            std::getline(inputFile, line);
-            if (line.empty())
-                continue;
-            std::stringstream ssname;
-            ssname >> first >> last;
-            name = first + " " + last;
-
-            std::getline(inputFile, line);
-            if (line.empty())
-                continue;
-            std::stringstream sszip(removeTabs(line));
+            fout << friendId << " "; 
         }
-    }
-}
-
-void Network::writeUsers(char* fname)
-{
-    std::ofstream outputFile(fname);
-
-    if (!outputFile.is_open())
-    {
-        std::cout << "error opening file..." << std::endl;
-        return;
-    }
-
-    outputFile << users_.size() << std::endl;
-
-    for (int i = 0; i < users_.size(); ++i)
-    {
-        User* user = users_[i];
-
-        outputFile << user -> getId() << std::endl;
-        outputFile << '\t' << user -> getName() << std::endl;
-        outputFile << '\t' << user -> getYear() << std::endl;
-        outputFile << '\t' << user -> getZip() << std::endl;
-        outputFile << '\t';
-        auto friends = user->getFriends();
-        for (int friendId : friends)
-        {
-            outputFile << friendId << " ";
-        }
-        outputFile <<std::endl;
-    }
-    outputFile.close();
+        fout << std::endl;
+    }   
+    fout.close();
 }
 
 
 std::vector<int> Network::shortestPath(int from, int to)
 {
-    if (from < 0 || from >= users_.size() || to < 0 || to >= users_.size()) // checking valid input indices
-        return {}; 
+    
+    if (to < 0 || to >= users_.size() || from < 0 || from >= users_.size()) 
+    {
+        return {}; // valid id check
+    }
 
-    int sizeUsers = users_.size();
-    std::vector<bool> visited (sizeUsers, false);
-    std::vector<int> dist (sizeUsers, -1);
-    std::vector<int> prev (sizeUsers, -1);
+    
     std::queue<int> queue;
+    std::vector<bool> visited(users_.size(), false); 
+    std::vector<int> dist(users_.size(), -1); 
+    std::vector<int> prev(users_.size(), -1); 
 
+    // INITIALIZE BFS
     dist[from] = 0;
     visited[from] = true;
     queue.push(from);
 
-    // run BFS to find shortest result
-    while (!queue.empty())
+    // PERFORM BFS
+    while (!queue.empty()) 
     {
         int current = queue.front();
         queue.pop();
 
-        // target node found
-        if (current == to)
-            break;
-
-        // look at friends
-        for (int neighbor : users_[current]->getFriends())
+        if (current == to) // found target
         {
-            if (!visited[neighbor])
+            break;
+        }
+        
+        for (int neighbor : users_[current]->getFriends()) // look at friends of the current 
+        {
+            if (!visited[neighbor]) 
             {
                 visited[neighbor] = true;
                 dist[neighbor] = dist[current] + 1;
@@ -235,165 +254,230 @@ std::vector<int> Network::shortestPath(int from, int to)
         }
     }
 
-    if (dist[to] == -1) // return empty vector for no path
-        return {};
+    std::vector<int> result; // return vector
 
-    std::vector<int> result;
-    for (int current = to; current != -1; current = prev[current])
+    if (dist[to] == -1) 
+    {
+        return result; // cannot find to
+    }
+
+
+    for (int current = to; current != -1; current = prev[current]) // building shortest path
+    {
         result.push_back(current);
+    }
 
-    std::reverse(result.begin(), result.end()); // reverse the result to get from to to
-
+    std::reverse(result.begin(), result.end()); // reverse to get in from to to order
     return result;
 }
 
-std::vector<int> Network::distanceUser(int from, int& to, int dist)
+
+
+std::vector<int> Network::distanceUser(int from, int& to, int distance) 
 {
-
-    std::unordered_map<User*, int> dist;  // keep track of map of dists in nodes
-    std::unordered_map<User*, User*> prev; // map to keep track of prev visied
-    std::queue<User*> queue;
-
-    User* source = getUser(from);
-    queue.push(source);
-    dist[source] = 0;
-
-    while (queue.size() > 0)
+    if (from < 0 || from >= users_.size()) // valid id check
     {
-        User* curr = queue.front();
+        to = -1; 
+        return {}; 
+    }
+
+    std::queue<int> queue; 
+    std::vector<bool> visited(users_.size(), false); 
+    std::vector<int> dist(users_.size(), -1); 
+    std::vector<int> prev(users_.size(), -1); 
+
+    bool distanceFound = false; 
+
+    // INITIALIZE BFS
+    dist[from] = 0; 
+    visited[from] = true; 
+    queue.push(from); 
+
+    // PERFORM BFS
+    while (!queue.empty()) 
+    {
+        int current = queue.front();
         queue.pop();
 
-        if (dist[curr] == dist)
+        
+        for (int neighbor : users_[current]->getFriends()) // look at current's friends
         {
-            std::vector<int> result;
-            to = curr->getId();
-            while (curr != source)
+            if (!visited[neighbor]) 
             {
-                result.push_back(curr->getId());
-                curr = prev[curr];
+                dist[neighbor] = dist[current] + 1;
+                visited[neighbor] = true;
+                prev[neighbor] = current;
+                queue.push(neighbor);
+
+                
+                if (dist[neighbor] == distance) // check if friend matches target dist
+                {
+                    to = neighbor;
+                    distanceFound = true;
+                    break;
+                }
             }
-            std::reverse(result.begin(), result.end()); // reverse result to get "from to to"
-            return result;
         }
 
-        for (auto neighbor : curr->getFriends())
+        if (distanceFound) 
         {
-            if (prev.find(getUser(neighbor)) == prev.end() && getUser(neighbor) != source)
-            {
-                queue.push(getUser(neighbor));
-                prev[getUser(neighbor)] = curr;
-                dist[getUser(neighbor)] = dist[curr] + 1;
-            }
+            break; 
         }
     }
-    std::cout << "Not connected..." << std::endl;
-    std::vector<int> empty;
-    return empty;
+
+
+    if (!distanceFound) // no user found case
+    {
+        to = -1;
+        return {};
+    }
+
+    
+    std::vector<int> result; // vector to return
+    int userInPath = to;
+
+    if (prev[to] == from) // if from and to are neighbors
+    {
+        result.push_back(from);
+        result.push_back(to);
+        return result;
+    }
+
+    
+    while (userInPath != -1) // rebuild the path
+    {
+        result.push_back(userInPath);
+        userInPath = prev[userInPath];
+    }
+
+    
+    std::reverse(result.begin(), result.end()); // reverse to get correct order
+    return result;
 }
 
-std::vector<int> Network::suggestFriends(int who, int& score)
+std::vector<int> Network::suggestFriends(int who, int& score) 
 {
-    std::unordered_map<User*, int> dist;  // keep track of map of dists in nodes
-    std::unordered_map<int, int> scores;  // initialize map of scores
-    int max_score;                        // max score to search all users with that score
-    std::queue<User*> queue;
+    score = 0; // initialize score to 0
 
-    User* source = getUser(who);
-    queue.push(source);
-    dist[source] = 0;
+    User* user = getUser(who);
 
-    while (queue.size() > 0) // DFS
+    if (!user) // user not found
     {
-        User* curr = queue.front();
-        queue.pop();
+        return {};
+    }
 
-        for (auto neighbor : curr->getFriends())
+    std::vector<int> userFriends(user->getFriends().begin(), user->getFriends().end()); // convert user's friends to a vector
+
+    std::vector<std::pair<int, int>> suggestions;                                       // stores suggestions and their scores
+
+    for (int friendId : userFriends)                                                    // go through friends of the users
+    {
+        User* friendUser = getUser(friendId); // get friend of current user
+
+        std::vector<int> friendOfFriends(friendUser->getFriends().begin(), friendUser->getFriends().end()); // get current friend's friends
+
+        for (int mutuals : friendOfFriends) // looping through friend of friends
         {
-            if (getUser(neighbor) == source || dist.find(neighbor) != dist.end() && dist[getUser(neighbor)] == 1)
+            if (mutuals == who) // mutual equals user then skip
             {
                 continue;
             }
-            if (dist.find(neighbor)!=dist.end() && dist[neighbor] == 2)
+
+            bool isFriend = std::find(userFriends.begin(), userFriends.end(), mutuals) != userFriends.end(); // check if mutual is already direct friend (can also check if distance 1)
+                                                                                                             // initialize to isFriend for ease of use
+
+            if (!isFriend)
             {
-                scores[neighbor]++;
-                max_score = std::max(max_score, scores[neighbor]);
-            }
-            else
-            {
-                dist[getUser(neighbor)] = dist[curr] + 1;
-                if (dist[getUser(neighbor)] == 2) // dist of neighbor = 2 since dist = 1 are direct friends
+                bool foundInPotential = false;
+
+                for (auto& potential : suggestions) 
                 {
-                    scores[neighbor] = 1;
-                    if (max_score == 0) 
+                    if (potential.first == mutuals) 
                     {
-                        max_score = 1;
+                        potential.second++; // increase score if in found in mutuals
+                        foundInPotential = true;
+                        break;
                     }
                 }
-                else
+
+                
+                if (!foundInPotential) 
                 {
-                    queue.push(getUser(neighbor));
+                    suggestions.push_back(std::make_pair(mutuals, 1)); // add mutual to suggestions and set score to 1
                 }
             }
         }
     }
 
-    std::vector<int> suggestions;
-    score = max_score;  // score is an address
-    if (max_score == 0)
+    if (suggestions.empty())  // no suggestions found
     {
-        return suggestions;
+        score = 0;
+        return {};
     }
-    for (const auto& pair : scores)
+
+    std::vector<int> strongMutual;
+    int highestScore = 0;
+
+    for (const auto& candidate : suggestions) 
     {
-        if (pair.second == max_score)
+        if (candidate.second > highestScore) 
         {
-            suggestions.push_back(pair.first);
+            // update strongMutual with new highest scores
+            strongMutual.clear();
+            highestScore = candidate.second;
+            strongMutual.push_back(candidate.first);
+        } 
+        else if (candidate.second == highestScore) 
+        {
+            strongMutual.push_back(candidate.first); // add candidate if they share a score
         }
     }
-    return suggestions;
+
+    score = highestScore; // set score to highest score
+
+    return strongMutual;  // return strongest mutuals
 }
 
-std::vector<std::vector<int>> Network::groups()
+std::vector<std::vector<int>> Network::groups() 
 {
-    std::unordered_set<int> visited;
-    std::vector<std::vector<int>> groups;
-    std::vector<int> group;
-    for (auto user : users_)
+    std::vector<bool> visited(users_.size(), false); 
+
+    if (users_.empty()) 
     {
-        if (!visited.find(user->getId()) == visited.end())
+        return {};
+    }
+
+    
+    std::vector<std::vector<int>> result; // stores all connected groups in a vector of vectors
+    
+    for (int i = 0; i < users_.size(); ++i)
+    {
+        if (!visited[i]) 
         {
-            group = dfshelper(user);
-            groups.push_back(group);
-            for (auto userId : group)
+            // INITIALIZE DFS
+            std::vector<int> currentGroup; // stores one currentGroup
+            std::stack<int> stack;
+            stack.push(i);
+            visited[i] = true;
+
+            // PERFORM DFS
+            while (!stack.empty()) 
             {
-                visited.insert(userId);
+                int current = stack.top();
+                stack.pop();
+                currentGroup.push_back(current);
+
+                for (int friendId : users_[current]->getFriends()) // look at friends of current user
+                {
+                    if (!visited[friendId])
+                    {
+                        visited[friendId] = true;
+                        stack.push(friendId);
+                    }
+                }
             }
+            result.push_back(currentGroup);
         }
     }
-    return groups;
-}
-
-std::vector<int> Network::dfshelper(User* source)
-{
-    std::stack<int> stck;
-    std::vector<int> visited;
-
-    source = source->getId();
-    visited.push_back(source);
-    stck.push(source);
-
-    while (stck.size() > 0) 
-    {
-        int cur = stck.top();
-        stck.pop();
-        for (auto neighbor : getUser(cur)->getFriends()) 
-        {
-            if (visited.find(neighbor) ==  visited.end()) 
-            {
-                visited.push_back(neighbor);
-                stck.push(neighbor);
-            }
-        }
-    }
-    return visited;
+    return result; // return all connected groups in the network
 }
