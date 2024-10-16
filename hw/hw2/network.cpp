@@ -224,10 +224,10 @@ std::vector<int> Network::shortestPath(int from, int to)
     }
 
     
-    std::queue<int> queue;
-    std::vector<bool> visited(users_.size(), false); 
-    std::vector<int> dist(users_.size(), -1); 
-    std::vector<int> prev(users_.size(), -1); 
+    std::queue<int> queue; // initializes queue for bfs performing
+    std::vector<bool> visited(users_.size(), false); // initialize a vector of bool to check whether visited or not that equals the users_.size() of the network and initializes all to false
+    std::vector<int> dist(users_.size(), -1); // initializes a vector of integers to track distance and sets all distances equal to -1 at the beginning
+    std::vector<int> prev(users_.size(), -1); // initializes a vector to keep track of previous vertices visited and initializes them all to -1 (starting vertex should stay -1 since no previous)
 
     // INITIALIZE BFS
     dist[from] = 0;
@@ -242,7 +242,7 @@ std::vector<int> Network::shortestPath(int from, int to)
 
         if (current == to) // found target
         {
-            break;
+            break; // breaks out of bfs to down to result line
         }
         
         for (int neighbor : users_[current]->getFriends()) // look at friends of the current 
@@ -265,7 +265,7 @@ std::vector<int> Network::shortestPath(int from, int to)
     }
 
 
-    for (int current = to; current != -1; current = prev[current]) // building shortest path
+    for (int current = to; current != -1; current = prev[current]) // building shortest path / current not equal to -1 as the end since prev[startingNode] will equal -1 which we initialized it as
     {
         result.push_back(current);
     }
@@ -289,7 +289,7 @@ std::vector<int> Network::distanceUser(int from, int& to, int distance)
     std::vector<int> dist(users_.size(), -1); 
     std::vector<int> prev(users_.size(), -1); 
 
-    bool distanceFound = false; 
+    bool distanceFound = false; // keeps track of if distance has been found to break out of bfs loop early or not
 
     // INITIALIZE BFS
     dist[from] = 0; 
@@ -307,13 +307,13 @@ std::vector<int> Network::distanceUser(int from, int& to, int distance)
         {
             if (!visited[neighbor]) 
             {
-                dist[neighbor] = dist[current] + 1;
                 visited[neighbor] = true;
-                prev[neighbor] = current;
-                queue.push(neighbor);
+                dist[neighbor] = dist[current] + 1; // distance of neighbor will always be distance of current + 1
+                prev[neighbor] = current; // set the prev[neighbor] equal to current since previous node of the neighbor that is being visited is the one you are currently looking at
+                queue.push(neighbor); // push neighbor into queue
 
                 
-                if (dist[neighbor] == distance) // check if friend matches target dist
+                if (dist[neighbor] == distance) // check if neighbor/friend matches target dist
                 {
                     to = neighbor;
                     distanceFound = true;
@@ -349,8 +349,8 @@ std::vector<int> Network::distanceUser(int from, int& to, int distance)
     
     while (userInPath != -1) // rebuild the path
     {
-        result.push_back(userInPath);
-        userInPath = prev[userInPath];
+        result.push_back(userInPath); // pushes back "to" node 
+        userInPath = prev[userInPath]; // sets userInPath equal to its previous at each iteration
     }
 
     
@@ -362,49 +362,48 @@ std::vector<int> Network::suggestFriends(int who, int& score)
 {
     score = 0; // initialize score to 0
 
-    User* user = getUser(who);
+    User* mainGuy = getUser(who);
 
-    if (!user) // user not found
+    if (!mainGuy) // user not found
     {
         return {};
     }
 
-    std::vector<int> userFriends(user->getFriends().begin(), user->getFriends().end()); // convert user's friends to a vector
-
+    std::vector<int> mainGuysFriends(mainGuy->getFriends().begin(), mainGuy->getFriends().end()); // convert user's friends to a vector
     std::vector<std::pair<int, int>> suggestions;                                       // stores suggestions and their scores
 
-    for (int friendId : userFriends)                                                    // go through friends of the users
+    for (int friendId : mainGuysFriends)                                                    // go through friends of the users
     {
-        User* friendUser = getUser(friendId); // get friend of current user
+        User* currentUser = getUser(friendId); // get friend of current user
 
-        std::vector<int> friendOfFriends(friendUser->getFriends().begin(), friendUser->getFriends().end()); // get current friend's friends
+        std::vector<int> friendOfMainGuyFriends(currentUser->getFriends().begin(), currentUser->getFriends().end()); // get main guy's friend's friends
 
-        for (int mutuals : friendOfFriends) // looping through friend of friends
+        for (int mutuals : friendOfMainGuyFriends) // looping through friend of friends
         {
             if (mutuals == who) // mutual equals user then skip
             {
                 continue;
             }
 
-            bool isFriend = std::find(userFriends.begin(), userFriends.end(), mutuals) != userFriends.end(); // check if mutual is already direct friend (can also check if distance 1)
-                                                                                                             // initialize to isFriend for ease of use
+            bool friendsWMainGuy = std::find(mainGuysFriends.begin(), mainGuysFriends.end(), mutuals) != mainGuysFriends.end(); // check if mutual is already direct friend (can also check if distance 1)
+                                                                                                                                // initialize to friendsWMainGuy for ease of use
 
-            if (!isFriend)
+            if (!friendsWMainGuy) // if mutual is not a direct friend then add them to suggestions vector and increment their score
             {
-                bool foundInPotential = false;
+                bool foundInSuggestions = false;
 
                 for (auto& potential : suggestions) 
                 {
-                    if (potential.first == mutuals) 
+                    if (potential.first == mutuals)
                     {
                         potential.second++; // increase score if in found in mutuals
-                        foundInPotential = true;
+                        foundInSuggestions = true;
                         break;
                     }
                 }
 
                 
-                if (!foundInPotential) 
+                if (!foundInSuggestions) 
                 {
                     suggestions.push_back(std::make_pair(mutuals, 1)); // add mutual to suggestions and set score to 1
                 }
@@ -425,9 +424,8 @@ std::vector<int> Network::suggestFriends(int who, int& score)
     {
         if (candidate.second > highestScore) 
         {
-            // update strongMutual with new highest scores
             strongMutual.clear();
-            highestScore = candidate.second;
+            highestScore = candidate.second; // update strongMutual with new highest scores
             strongMutual.push_back(candidate.first);
         } 
         else if (candidate.second == highestScore) 
