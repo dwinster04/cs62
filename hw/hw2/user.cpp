@@ -57,11 +57,11 @@ void User::addFriend(int id)
 
 void User::deleteFriend(int id)
 {
-    bool check = false;             // initialize default bool to false
+    bool check = false;              // initialize default bool to false
     
     for(auto i: friends_)
         if(i == id)
-            check = true;           // set bool value to true if check falls through
+            check = true;            // set bool value to true if check falls through
 
     if(check == true)               
         friends_.erase(id);          // remove specified id from friend's list

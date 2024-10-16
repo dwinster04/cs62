@@ -114,12 +114,12 @@ void Network::readUsers(char * fname)
         return;
     }
 
-    std::string line; // line takes in each line in file fname
-    getline(file, line); // set line to the first line in fname
-    std::stringstream ss; 
-    ss << line; 
-    int numUsers; 
-    ss >> numUsers; 
+    std::string line; // initialize a string "line" to store the line from following get line function call
+    std::getline(file, line); // sets first line to the first line in file (number of users: 148)
+    std::stringstream ss; // initialize stringstream ss to store line as string
+    ss << line; // reads line into ss as string
+    int numUsers; // initialize an integer to store number of users
+    ss >> numUsers; // store string (148) as integer (148)
 
     
     
