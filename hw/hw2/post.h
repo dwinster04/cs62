@@ -26,9 +26,35 @@ public:
     // post: creates parameterized object
     Post(int messageId, int ownerId, std::string message, int likes);
 
+    // GETTERS
+
+    // pre: none
+    // post: returns message id 
+    int getMessageId();
+
+    // pre: none
+    // post: returns owner (of post) id
+    int getOwnerId();
+
+    // pre: none
+    // post: returns content of the post
+    std::string getMessage();
+
+    // pre: none
+    // post: returns number of likes on a post
+    int getLikes();
+
     // pre: none
     // post: return a message showing [messageId] liked by [likes_] people.
-    std::string toString(std::string message, std::string likes);
+    std::string toString();
+
+    // pre: none
+    // post: returns author of the post
+    virtual std::string getAuthor();
+
+    // pre: none
+    // post: returns true if its public
+    virtual bool getIsPublic();
 
 };
 

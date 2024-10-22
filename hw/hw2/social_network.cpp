@@ -2,7 +2,6 @@
 #include "user.h"
 #include <iostream>
 #include <string>
-#include <assert>
 #include <fstream>
 
 void user_choice()
@@ -33,7 +32,7 @@ int main(int argc, char *argv[])
 
             std::cout << "Please enter the first name, last name, year of birth, and zip code number in that order: " <<std::endl;
             std::cin >> firstN >> lastN >> year >> zip;
-            std::endl;
+            std::cout << std::endl;
 
 
             int id = network.numUsers();        // sets new id = to number of users in the network at nth iteration

@@ -6,7 +6,7 @@
 User::User()
 {
     id_ = -1;
-    name_ = "";
+    name_ = " ";
     zip_ = -1;
     year_ = -1;
 }
@@ -16,7 +16,7 @@ User::User(int id, std::string name, int year, int zip, std::set<int> friends)
     id_ = id;
     name_ = name; 
     year_ = year;
-    zip_ = zip; 
+    zip_ = zip;
     friends_ = friends; 
 }
 

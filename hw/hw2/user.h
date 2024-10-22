@@ -10,7 +10,6 @@
 class User
 { 
 private:
-
     int id_; 
     std::string name_; 
     int year_;
