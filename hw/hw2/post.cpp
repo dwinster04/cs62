@@ -41,13 +41,24 @@ std::string Post::toString()
     return oss.str();
 }
 
-
 std::string Post::getAuthor()
 {
-    return "hello"; // something
+    return ""; // something
 }
 
-bool getIsPublic()
+bool Post::getIsPublic()
 {
     return true; // true/false based on something
+}
+
+IncomingPost::IncomingPost() 
+{
+    isPublic_ = true;
+    author_ = " ";
+}
+
+IncomingPost::IncomingPost(int messageId, int ownerId, std::string message, int likes, bool isPublic, std::string author) : Post(messageId, ownerId, message, likes) 
+{
+    isPublic_ = isPublic;
+    author_ = author;
 }

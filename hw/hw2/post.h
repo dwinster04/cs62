@@ -57,6 +57,45 @@ public:
     virtual bool getIsPublic();
 
 };
+class IncomingPost: public Post // or private check later
+{
+private:
+    bool isPublic_;
+    std::string author_;
+
+public:
+    // default constructor
+
+    // pre: none
+    // post: creates empty incoming post object
+    IncomingPost();
+
+    // pre: none
+    // post: creates parameterized incoming post object
+    IncomingPost(int messageId, int ownerId, std::string message, int likes, bool isPublic, std::string author);
+
+
+    // GETTERS  
+
+    // pre: none
+    // post: returns message saying who wrote something and states whether private or not
+    std::string toString();
+
+    // pre: none
+    // post: returns author of message
+    std::string getAuthor();
+
+    // pre: none
+    // post: returns t/f if public
+    bool getIsPublic();
+
+
+
+
+
+
+};
+
 
 
 
