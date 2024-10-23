@@ -38,7 +38,7 @@ int main(int argc, char *argv[])
             int id = network.numUsers();        // sets new id = to number of users in the network at nth iteration
             std::string fullName = firstN + " " + lastN; // makes first name and last name new variable full name
             network.addUser(new User(network.numUsers(), fullName, year, zip, {}));     // creates the new user with new id and given inputs
-            std::cout << fullName << "has been added to the network." << std::endl;
+            std::cout << fullName << " has been added to the network." << std::endl;
         }
         else if (choice == 2) // option 2: add a friend connection
         {

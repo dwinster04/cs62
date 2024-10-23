@@ -15,6 +15,7 @@ private:
     int year_;
     int zip_;
     std::set<int> friends_;
+    std::vector<Post*> messages_;
 
     // class invariants
     // 1) int id_: id stores user id 0,1,2,...
@@ -76,6 +77,10 @@ public:
     // pre: must be an existing connection to remove
     // post: removes friend id from friend's list
     void deleteFriend(int id);
+
+    // pre: must take in a pointer to a post object
+    // post: adds a post to the vector of pointers to post objects in the messages_ vector
+    void addPost(Post*); 
 
 };
 

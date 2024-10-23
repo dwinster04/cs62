@@ -51,16 +51,23 @@ bool Post::getIsPublic()
     return true; // true/false based on something
 }
 
+// INCOMING POST FUNCTS
 
 IncomingPost::IncomingPost()
 {
     isPublic_ = true;
     author_ = " ";
 }
-/*
+
 IncomingPost::IncomingPost(int messageId, int ownerId, std::string message, int likes, bool isPublic, std::string author) : Post(messageId, ownerId, message, likes) 
 {
     isPublic_ = isPublic;
     author_ = author;
 }
-*/
+
+std::string IncomingPost::toString()
+{
+    std::ostringstream oss;
+    oss << author_ << "wrote" << isPublic_ << ":" << toString() <<std::endl;
+    return oss.str();
+}

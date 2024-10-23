@@ -80,20 +80,6 @@ public:
     // pre: none
     // post: returns message saying who wrote something and states whether private or not
     std::string toString();
-
-    // pre: none
-    // post: returns author of message
-    std::string getAuthor();
-
-    // pre: none
-    // post: returns t/f if public
-    bool getIsPublic();
-
-
-
-
-
-
 };
 
 

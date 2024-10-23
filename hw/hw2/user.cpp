@@ -1,4 +1,5 @@
 #include "user.h"
+#include "post.h"
 #include<string>
 #include<iostream>
 
@@ -67,4 +68,9 @@ void User::deleteFriend(int id)
         friends_.erase(id);          // remove specified id from friend's list
     
     return;
+}
+
+void User::addPost(Post*)
+{
+    messages_.push_back(Post*);
 }
