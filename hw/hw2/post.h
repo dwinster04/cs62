@@ -5,8 +5,6 @@
 #include "user.h"
 #include "network.h"
 
-// class Post
-
 class Post
 {
 private:
@@ -46,7 +44,7 @@ public:
 
     // pre: none
     // post: return a message showing [messageId] liked by [likes_] people.
-    std::string toString();
+    virtual std::string toString();
 
     // pre: none
     // post: returns author of the post
@@ -57,7 +55,7 @@ public:
     virtual bool getIsPublic();
 
 };
-class IncomingPost: public Post // or private check later
+class IncomingPost: public Post
 {
 private:
     bool isPublic_;
@@ -74,29 +72,18 @@ public:
     // post: creates parameterized incoming post object
     IncomingPost(int messageId, int ownerId, std::string message, int likes, bool isPublic, std::string author);
 
-
-    // GETTERS  
-
     // pre: none
     // post: returns message saying who wrote something and states whether private or not
     std::string toString();
+
+    // GETTERS
+
+    // pre: none
+    // post: returns the author of incoming post
+    std::string getAuthor();
+
+    // pre: none
+    // post: returns T/F if post is public or not
+    bool getIsPublic();
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #endif // POST_H

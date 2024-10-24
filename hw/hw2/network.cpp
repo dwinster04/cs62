@@ -1,5 +1,6 @@
 #include "network.h"
 #include "user.h"
+#include "post.h"
 #include <vector>
 #include <set>
 #include <queue>
@@ -481,4 +482,30 @@ std::vector<std::vector<int>> Network::groups()
         }
     }
     return result; // return all connected groups in the network
+}
+
+void Network::addPost(int ownerId, std::string message, int likes, bool isIncoming, std::string authorName, bool isPublic)
+{
+    for (auto user: users_)
+    {
+        if (user->getId() == ownerId)
+        {
+            int messageId = user->getPosts().size(); // returns number of posts user has 
+
+            Post* newPost;
+
+            if (isIncoming)
+            {
+                newPost = new Post(messageId, ownerId, message, likes, authorName, isPublic);
+            }
+            else
+            {
+                newPost = new Post(messageId, ownerId, message, likes);
+            }
+            user->addPost(newPost);
+            messages_.push_back(newPost);
+
+            return; // return within loop since we found the owner id of the user whos post we want to add
+        }
+    }
 }

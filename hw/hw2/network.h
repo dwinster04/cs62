@@ -3,9 +3,10 @@
 
 #include <vector>
 #include "user.h"
+#include "post.h"
 
-// class User;
-
+class User;
+class Post;
 class Network
 {
 private:
@@ -67,6 +68,10 @@ public:
     // pre: none
     // post: returns a vector of vectors which are groups of connected users
     std::vector<std::vector<int> > groups();
+
+    // pre: none
+    // post: adds new post to the messages vector of the user whose id is ownerId
+    void addPost(int ownerId, std::string message, int likes, bool isIncoming, std::string authorName, bool isPublic);
 
 };
 

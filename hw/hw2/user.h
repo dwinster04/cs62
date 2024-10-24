@@ -5,8 +5,11 @@
 #include <iostream>
 #include <set> 
 #include <string> 
+#include "post.h"
+#include "network.h"
 
-
+class Post; // forward declaration
+class Network;
 class User
 { 
 private:
@@ -78,10 +81,19 @@ public:
     // post: removes friend id from friend's list
     void deleteFriend(int id);
 
+    // post functs
+
     // pre: must take in a pointer to a post object
     // post: adds a post to the vector of pointers to post objects in the messages_ vector
-    void addPost(Post*); 
+    void addPost(Post*);
 
+    // pre: none
+    // post: returns a vector of pointers to post objects
+    std::vector<Post*> getPosts();
+
+    // pre: none
+    // post: returns a string that holds the most recent howMany posts
+    std::string getPostsString(int howMany, bool showOnlyPublic);
 };
 
 #endif // USER_H

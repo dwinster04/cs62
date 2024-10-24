@@ -1,5 +1,6 @@
 #include "user.h"
 #include "post.h"
+#include <vector>
 #include<string>
 #include<iostream>
 
@@ -70,7 +71,35 @@ void User::deleteFriend(int id)
     return;
 }
 
-void User::addPost(Post*)
+void User::addPost(Post* post)
 {
-    messages_.push_back(Post*);
+    messages_.push_back(post);
+}
+
+std::vector<Post*> User::getPosts()
+{
+    return messages_;
+}
+
+std::string User::getPostsString(int howMany, bool showOnlyPublic)
+{
+    std::string result;
+
+    for (int i = messages_.size() - 1; i >= howMany && howMany > 0; --i)
+    {
+        if (showOnlyPublic && !messages_[i]->getIsPublic())
+        {
+            continue;
+        }
+
+        if (!result.empty())
+        {
+            result += "\n\n";
+        }
+
+        result += messages_[i]->toString();
+
+        --howMany;
+    }
+    return result;
 }
