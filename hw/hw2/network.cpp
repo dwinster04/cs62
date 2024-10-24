@@ -496,16 +496,29 @@ void Network::addPost(int ownerId, std::string message, int likes, bool isIncomi
 
             if (isIncoming)
             {
-                newPost = new Post(messageId, ownerId, message, likes, authorName, isPublic);
+                newPost = new IncomingPost(messageId, ownerId, message, likes, isPublic, authorName);
             }
             else
             {
                 newPost = new Post(messageId, ownerId, message, likes);
             }
-            user->addPost(newPost);
-            messages_.push_back(newPost);
-
+            user->addPost(newPost); // add newPost object to messages_ User class method to add to messages_ vector
             return; // return within loop since we found the owner id of the user whos post we want to add
         }
     }
 }
+
+std::string Network::getPostsString(int ownerId, int howMany, bool showOnlyPublic)
+{
+    User* user = getUser(ownerId); // set user equal to ownerId (person we want to return their posts)
+
+    if (user != nullptr)
+    {
+        return user->getPostsString(howMany, showOnlyPublic);
+    }
+    else
+    {
+        return "User not found."; // user does not exist
+    }
+}
+

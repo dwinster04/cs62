@@ -73,6 +73,13 @@ public:
     // post: adds new post to the messages vector of the user whose id is ownerId
     void addPost(int ownerId, std::string message, int likes, bool isIncoming, std::string authorName, bool isPublic);
 
+    // pre: none
+    // post: returns a string that holds the most recent howMany posts (inherted from User class)
+    std::string getPostsString(int ownerId, int howMany, bool showOnlyPublic);
+
+    // pre: must take in char* fname (int)
+    // post: reads posts
+    int readPosts(char* fname);
 };
 
 #endif //NETWORK_H
