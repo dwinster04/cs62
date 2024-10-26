@@ -1,0 +1,4 @@
+1. Storing these as pointers will allow us to store both the parent and child class objects in a single vector.
+2. We do this because the message variable in the post class is private
+3. Virtual. This would go in the original declaration of the parent class' method before or after the return type.
+4. 10 with the help of Drahmann Center.
