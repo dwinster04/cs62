@@ -144,7 +144,7 @@ void Network::readUsers(char * fname)
             name = name + temp + " "; 
         }
 
-        if(name[name.size()-1] == ' ') // removing tab character
+        if(name[name.size()-1] == ' ') // removing tab character (possibly)
         {
             name = name.substr(0,name.size()-1); // removes space after name
         }
@@ -491,7 +491,8 @@ void Network::addPost(int ownerId, std::string message, int likes, bool isIncomi
         if (user->getId() == ownerId)
         {
             int messageId = user->getPosts().size(); // returns number of posts user has 
-
+                                                     // chance this should be total number of posts in network
+                                                     // CHECK LATER
             Post* newPost;
 
             if (isIncoming)
@@ -522,3 +523,117 @@ std::string Network::getPostsString(int ownerId, int howMany, bool showOnlyPubli
     }
 }
 
+int Network::readPosts(char* fname)
+{
+    std::ifstream file(fname);
+
+    if(!file)
+    {
+        return -1;
+    }
+
+    std::string line; // initialize a string "line" to store the line from following get line function call
+    std::getline(file, line); // sets first line to the first line in file (number of users: 148)
+    std::stringstream ss; // initialize stringstream ss to store line as string
+    ss << line; // reads line into ss as string
+    int numPosts; // initialize an integer to store number of users
+    ss >> numPosts; // store string (148) as integer (148)
+
+    for(int i = 0; i < numPosts; ++i)
+    { 
+        getline(file, line); // message id
+        int messageId;
+        messageId = std::stoi(line);
+
+        getline(file, line); // message
+        std::string message;
+        message = line;
+        message = message.substr(1, message.size()); // removes tab at the start
+
+        getline(file, line); // owner id
+        line = line.substr(1, line.size());
+        int ownerId;
+        ownerId = std::stoi(line);
+
+        getline(file, line); // likes
+        line = line.substr(1, line.size());
+        int likes;
+        likes = std::stoi(line);
+
+        getline(file, line); // public/private
+        if(line.size() == 0)
+        {
+            addPost(ownerId, message, likes, false, "", false); // creates normal post
+            getline(file, line);
+        }
+        else
+        {
+            bool isPublic = false;
+            if(line == "\tpublic")
+            {
+                isPublic = true;
+            }
+
+            getline(file, line); // author
+            line = line.substr(1, line.size());
+            std::string author = line;
+
+            addPost(messageId, message, likes, true, author, isPublic);
+        }
+    }
+    return 1;
+}
+
+bool key(Post* post1, Post* post2) // sorting key
+{
+    return post1->getMessageId() < post2->getMessageId();
+}
+
+int Network::writePosts(char* fname)
+{
+    std::vector<Post*> posts;
+    for (auto user : users_)
+    {
+        for (auto post : user->getPosts())
+        {
+            posts.push_back(post);
+        }
+    }
+
+    std::sort(posts.begin(), posts.end(), key);
+    
+    std::ofstream fout(fname);
+
+    if (!fout.is_open()) 
+    {
+        return -1;
+    }
+
+    fout << posts.size() << std::endl;
+
+    for (auto post : posts) 
+    {
+        fout << post -> getMessageId() << std::endl;
+        fout << '\t' << post -> getMessage() << std::endl;
+        fout << '\t' << post -> getOwnerId() << std::endl;
+        fout << '\t' << post -> getLikes() << std::endl;
+        if (post->getAuthor().size() > 0)
+        {
+            if (post->getIsPublic())
+            {
+                fout << '\t' << "public" << std::endl;
+            }
+            else
+            {
+                fout << '\t' << "private" << std::endl;
+            }
+            fout << '\t' << post -> getAuthor() << std::endl;
+        }
+        else
+        {
+            fout << std::endl << std::endl;
+        }
+    }   
+    fout.close();
+    return 1;
+}

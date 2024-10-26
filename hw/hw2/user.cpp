@@ -83,21 +83,24 @@ std::vector<Post*> User::getPosts()
 
 std::string User::getPostsString(int howMany, bool showOnlyPublic)
 {
-    std::string result;
+    std::string result = "";
 
-    for (int i = messages_.size() - 1; i >= howMany && howMany > 0; --i)
+    for (int i = messages_.size() - 1; i >= 0 && howMany > 0; --i)
     {
         if (showOnlyPublic && !messages_[i]->getIsPublic())
         {
             continue;
         }
 
+        /*
         if (!result.empty())
         {
             result += "\n\n";
         }
+        */
 
         result += messages_[i]->toString();
+        result += "\n\n";
 
         --howMany;
     }

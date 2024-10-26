@@ -10,6 +10,7 @@ void user_choice()
     std::cout << "2) Add a friend..." << std::endl;
     std::cout << "3) Delete friend..." << std::endl;
     std::cout << "4) Write to file..." << std::endl;
+    std::cout << "5) View posts..." << std::endl;
     std::cout << "Enter any other number to exit..." << std::endl;
 }
 
@@ -18,6 +19,7 @@ int main(int argc, char *argv[])
 {
     Network network;
     network.readUsers(argv[1]);     // argv[1] = opening of the given user input file
+    network.readPosts(argv[2]);       // argv[2] = opening of the given post file
 
     while(true)
     {
@@ -88,6 +90,22 @@ int main(int argc, char *argv[])
 
             std::cout << "Enter a file name to create: ";
             network.writeUsers(const_cast<char*>(ofile.c_str()));
+        }
+        else if (choice == 5)
+        {
+            std::string firstN, lastN, numPostsStr;
+            std::cout << "Please enter first/last name and number of posts that you want to see..." <<std::endl;
+            std::cin >> firstN >> lastN >> numPostsStr;
+            int numPosts = std::stoi(numPostsStr);
+            std::cout << (network.getPostsString(network.getId(firstN + " " + lastN), numPosts, false)) << std::endl;
+            std::cout << network.getId(firstN + " " + lastN) << std::endl;
+            // for (auto posts : network.getUser(network.getId(firstN + " " + lastN))->getPosts())
+            // {
+            //     std::cout << posts->toString()<<  std::endl;
+            // }
+        
+
+            
         }
         else
         {

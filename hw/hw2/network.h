@@ -80,6 +80,10 @@ public:
     // pre: must take in char* fname (int)
     // post: reads posts
     int readPosts(char* fname);
+
+    // pre: must take in char* fname (int)
+    // post: write posts to a file
+    int writePosts(char* fname);
 };
 
 #endif //NETWORK_H

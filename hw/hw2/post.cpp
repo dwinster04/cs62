@@ -36,7 +36,7 @@ int Post::getLikes()
 
 std::string Post::toString()
 {
-    return "[" + getMessage() + "] liked by " + std::to_string(getLikes()) + " people.\n";
+    return  getMessage() + " liked by " + std::to_string(getLikes()) + " people.\n";
 }
 
 std::string Post::getAuthor()
@@ -68,11 +68,11 @@ std::string IncomingPost::toString()
     std::string message = Post::toString();
     if(getIsPublic())
     {
-        return "[" + getAuthor() + "]" + " wrote " + message;
+        return getAuthor()  + " wrote: " + message;
     }
     else
     {
-        return "[" + getAuthor() + "]" + " wrote (private) " + message;
+        return getAuthor() + " wrote (private): " + message;
     }
 }
 
