@@ -36,7 +36,7 @@ int Post::getLikes()
 
 std::string Post::toString()
 {
-    return  getMessage() + " liked by " + std::to_string(getLikes()) + " people.\n";
+    return  getMessage() + " Liked by " + std::to_string(getLikes()) + " people.\n";
 }
 
 std::string Post::getAuthor()

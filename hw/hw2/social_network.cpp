@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
 {
     Network network;
     network.readUsers(argv[1]);     // argv[1] = opening of the given user input file
-    network.readPosts(argv[2]);       // argv[2] = opening of the given post file
+    network.readPosts(argv[2]);     // argv[2] = opening of the given user input file 2
 
     while(true)
     {
@@ -97,15 +97,7 @@ int main(int argc, char *argv[])
             std::cout << "Please enter first/last name and number of posts that you want to see..." <<std::endl;
             std::cin >> firstN >> lastN >> numPostsStr;
             int numPosts = std::stoi(numPostsStr);
-            std::cout << (network.getPostsString(network.getId(firstN + " " + lastN), numPosts, false)) << std::endl;
-            std::cout << network.getId(firstN + " " + lastN) << std::endl;
-            // for (auto posts : network.getUser(network.getId(firstN + " " + lastN))->getPosts())
-            // {
-            //     std::cout << posts->toString()<<  std::endl;
-            // }
-        
-
-            
+            std::cout << (network.getPostsString(network.getId(firstN + " " + lastN), numPosts, false)) << std::endl;             
         }
         else
         {

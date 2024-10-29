@@ -14,6 +14,7 @@
 Network::Network() 
 {
     users_ = {};
+    numPosts_ = 0;
 } 
 
 User* Network::getUser(int id) 
@@ -490,7 +491,7 @@ void Network::addPost(int ownerId, std::string message, int likes, bool isIncomi
     {
         if (user->getId() == ownerId)
         {
-            int messageId = user->getPosts().size(); // returns number of posts user has 
+            int messageId = numPosts_++; // returns number of posts user has 
                                                      // chance this should be total number of posts in network
                                                      // CHECK LATER
             Post* newPost;
@@ -564,6 +565,7 @@ int Network::readPosts(char* fname)
         if(line.size() == 0)
         {
             addPost(ownerId, message, likes, false, "", false); // creates normal post
+            
             getline(file, line);
         }
         else
@@ -578,10 +580,10 @@ int Network::readPosts(char* fname)
             line = line.substr(1, line.size());
             std::string author = line;
 
-            addPost(messageId, message, likes, true, author, isPublic);
+            addPost(ownerId, message, likes, true, author, isPublic);
         }
     }
-    return 1;
+    return 0;
 }
 
 bool key(Post* post1, Post* post2) // sorting key
@@ -635,5 +637,5 @@ int Network::writePosts(char* fname)
         }
     }   
     fout.close();
-    return 1;
+    return 0;
 }

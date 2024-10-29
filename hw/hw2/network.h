@@ -11,6 +11,7 @@ class Network
 {
 private:
     std::vector<User*> users_; //  vector of user pointers
+    int numPosts_;
 
 public:
     // default constructor
